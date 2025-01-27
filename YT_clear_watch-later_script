@@ -1,3 +1,56 @@
 ## Paste in Chrome Console and run
 
-setInterval(function () { document.querySelector('#primary button[aria-label="Action menu"]').click(); var things = document.evaluate( '//span[contains(text(),"Remove from")]', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null ); for (var i = 0; i < things.snapshotLength; i++) { things.snapshotItem(i).click(); } }, 1000);
+(async () => {
+  console.log("Starting to scroll through your 'Watch later' playlist...");
+
+  // Step 1: Scroll to the bottom in steps, so all videos are loaded.
+  let previousHeight = 0;
+  while (true) {
+    window.scrollTo(0, document.documentElement.scrollHeight);
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for loading
+
+    const currentHeight = document.documentElement.scrollHeight;
+    if (currentHeight === previousHeight) {
+      break; // No more videos to load
+    }
+    previousHeight = currentHeight;
+  }
+
+  console.log("All videos loaded. Now removing them...");
+
+  // Step 2: Gather all "action menu" buttons
+  const menuButtons = Array.from(
+    document.querySelectorAll(
+      'ytd-playlist-video-renderer #button[aria-label="Action menu"]'
+    )
+  );
+
+  let removedCount = 0;
+
+  // Step 3: Click each menu, then click "Remove" if found
+  for (const [index, button] of menuButtons.entries()) {
+    // Open the menu
+    button.click();
+    await new Promise(resolve => setTimeout(resolve, 700));
+
+    // Find "Remove from Watch later" item in the menu
+    const removeBtn = Array.from(
+      document.querySelectorAll(
+        'ytd-popup-container ytd-menu-service-item-renderer[role="menuitem"]'
+      )
+    ).find(item => /remove from/i.test(item.innerText));
+
+    // Click "Remove" if it’s there
+    if (removeBtn) {
+      removeBtn.click();
+      removedCount++;
+      console.log(`Removed ${removedCount} so far (video #${index + 1}).`);
+    }
+
+    // Short pause after removing
+    await new Promise(resolve => setTimeout(resolve, 700));
+  }
+
+  console.log(`Done! Removed ${removedCount} video(s) from 'Watch later'.`);
+})();
+
